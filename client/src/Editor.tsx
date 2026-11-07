@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
 import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import type * as Y from "yjs";
@@ -52,6 +53,7 @@ export function Editor({
         StarterKit.configure({ history: false }),
         Collaboration.configure({ document: ydoc }),
         CollaborationCursor.configure({ provider, user: identity }),
+        Placeholder.configure({ placeholder: "Start writing, or share the link and write together…" }),
       ],
       editorProps: { attributes: { class: "prose", spellcheck: "true" } },
     },
@@ -88,7 +90,7 @@ export function Editor({
             }}
             title="Change your display name"
           >
-            {identity.name}
+            You: {identity.name}
           </button>
         </div>
       </div>

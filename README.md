@@ -6,6 +6,8 @@ A real-time collaborative rich-text editor. Several people edit one document at 
 
 **Live demo:** https://collab-editor-1oj0.onrender.com. Create a document, then open its link in a second window. (Free hosting: the first visit after a quiet spell can take about a minute while the server wakes up.)
 
+![Home page: the headline is co-written by two live cursors](docs/screenshot-home.png)
+
 ![Two people editing the same document, with a live cursor](docs/screenshot-editor.png)
 
 ## What it does

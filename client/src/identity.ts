@@ -1,4 +1,5 @@
-const COLORS = ["#e11d48", "#ea580c", "#ca8a04", "#16a34a", "#0891b2", "#2563eb", "#7c3aed", "#c026d3"];
+// Bright, but dark enough for white cursor labels.
+const COLORS = ["#FF3D8B", "#3D5AFE", "#0FA37F", "#F06D1F", "#8B5CF6", "#0E9BD8", "#D6336C", "#B7791F"];
 const ADJECTIVES = ["Quick", "Calm", "Bright", "Bold", "Keen", "Swift", "Quiet", "Lucky"];
 const ANIMALS = ["Otter", "Falcon", "Panda", "Lynx", "Heron", "Fox", "Koala", "Gecko"];
 
