@@ -4,7 +4,7 @@ A real-time collaborative rich-text editor. Several people edit one document at 
 
 **Stack:** TypeScript, React, TipTap (ProseMirror), Node, WebSockets, Yjs, PostgreSQL, Redis, Docker, nginx.
 
-**Live demo:** _add your URL here after deploying (see [Deploy](#deploy))_. Create a document, then open its link in a second window.
+**Live demo:** https://collab-editor-1oj0.onrender.com. Create a document, then open its link in a second window. (Free hosting: the first visit after a quiet spell can take about a minute while the server wakes up.)
 
 ![Two people editing the same document, with a live cursor](docs/screenshot-editor.png)
 
