@@ -1,0 +1,19 @@
+# Render Blueprint: one free web service built from the root Dockerfile.
+# Render's free Postgres is deleted after 30 days, so point DATABASE_URL at a free Neon
+# database instead (see README > Deploy). Without it the app runs on the in-memory store
+# and documents vanish whenever the free instance sleeps.
+services:
+  - type: web
+    name: collab-editor
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: TRUST_PROXY
+        value: "1"
+      - key: LIST_DOCS
+        value: "false"

@@ -1,0 +1,24 @@
+{
+  "name": "collab-editor",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Real-time collaborative editor: Yjs CRDT sync server, Postgres persistence, Redis fan-out, React client",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "build": "npm run build -w server && npm run build -w client",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w client",
+    "test": "npm run test -w server",
+    "loadtest": "npm run loadtest -w server",
+    "test:e2e": "tsx e2e/collab.e2e.ts",
+    "start": "node server/dist/index.js"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0",
+    "tsx": "^4.19.2"
+  }
+}

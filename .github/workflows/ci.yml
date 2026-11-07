@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: collab
+          POSTGRES_PASSWORD: collab
+          POSTGRES_DB: collab
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U collab -d collab"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_URL: postgres://collab:collab@localhost:5432/collab
+      REDIS_URL: redis://localhost:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Unit and integration tests (incl. Postgres and Redis contracts)
+        run: npm test
+      - run: npm run build
+      - name: Install Chromium for the end-to-end test
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end test in two browsers
+        run: npm run test:e2e
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the production image
+        run: docker build -t collab-editor .
+      - name: Smoke-test the image
+        run: |
+          docker run -d --name app -p 4000:4000 collab-editor
+          for i in $(seq 1 30); do curl -fs localhost:4000/api/health && break; sleep 1; done
+          curl -fs localhost:4000/ | grep -q '<div id="root">'
+          docker logs app

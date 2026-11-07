@@ -1,0 +1,63 @@
+# Scaled-out setup: Postgres, Redis, two app instances, and nginx load-balancing between them.
+#   docker compose up --build
+# then open http://localhost:8080 in two windows.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: collab
+      POSTGRES_PASSWORD: collab
+      POSTGRES_DB: collab
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U collab -d collab"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    # Pub/sub only; nothing here needs to survive a restart.
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app1: &app
+    build: .
+    environment: &appenv
+      INSTANCE_ID: app1
+      DATABASE_URL: postgres://collab:collab@postgres:5432/collab
+      REDIS_URL: redis://redis:6379
+      TRUST_PROXY: "1"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "4001:4000" # direct access for the load test and /api/metrics
+
+  app2:
+    <<: *app
+    environment:
+      <<: *appenv
+      INSTANCE_ID: app2
+    ports:
+      - "4002:4000"
+
+  lb:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app1
+      - app2
+    ports:
+      - "8080:80"
+
+volumes:
+  pgdata:
